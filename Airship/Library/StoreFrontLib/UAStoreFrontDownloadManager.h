@@ -42,6 +42,9 @@
 - (void)downloadIfValid:(id)parameter;
 - (BOOL)hasPendingProduct:(UAProduct *)product;
 - (void)resumePendingProducts;
+/*BLANKPAGE Changes*/
+- (void)resumePendingProduct:(UAProduct *)product;
+- (void)cancelDownload;
 
 - (void)downloadDidFail:(UADownloadContent *)downloadContent;
 @end

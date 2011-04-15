@@ -122,7 +122,8 @@
 
 - (void)downloadIfValid:(id)parameter {
     UAProduct *product = nil;
-    
+	/*BLANKPAGE Changes. Set the delegate back in case download was cancelled.*/
+    downloadManager.delegate = self;
     if ([parameter isKindOfClass:[UAProduct class]]) {
         product = (UAProduct*)parameter;
         // Check if already downloading the product
@@ -134,6 +135,14 @@
         [self verifyProduct:product];
     } else if([parameter isKindOfClass: [SKPaymentTransaction class]]) {
         [self verifyTransaction:(SKPaymentTransaction*)parameter];
+    }
+}
+
+/*BLANKPAGE Changes*/
+- (void)cancelDownload {
+	downloadManager.delegate = nil;
+	for (UAZipDownloadContent *downloadContent in [downloadManager allDownloadingContents]) {
+		[downloadManager cancel:downloadContent];
     }
 }
 
@@ -192,6 +201,15 @@
             [downloadManager updateProgressDelegate:downloadContent];
         }
     }
+}
+
+/*BLANKPAGE Changes*/
+- (void)resumePendingProduct:(UAProduct *)pendingProduct {
+	UALOG(@"Resume pending product in purchasing queue %@", pendingProduct.productIdentifier);
+    downloadManager.delegate = self;
+	pendingProduct.receipt = [pendingProducts objectForKey:pendingProduct.productIdentifier];
+	pendingProduct.status = UAProductStatusUnpurchased;
+	[self verifyProduct:pendingProduct];
 }
 
 #pragma mark -
@@ -312,13 +330,14 @@
     [self downloadDidFail:downloadContent];
 }
 
-
 #pragma mark -
 #pragma mark Inventory observer methods
 
 - (void)inventoryStatusChanged:(NSNumber *)status {
     if ([status intValue] == UAInventoryStatusLoaded) {
-        [self resumePendingProducts];
+		/*BLANKPAGE Changes. Commented the below method call.
+		 Do not download pending products automatically*/
+        //[self resumePendingProducts];
     }
 }
 
