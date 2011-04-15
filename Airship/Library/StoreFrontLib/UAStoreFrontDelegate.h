@@ -39,4 +39,7 @@
 // Progress is between 0.0 and 1.0, inclusive
 - (void)productsDownloadProgress:(float)progress count:(int)count;
 
+/*BLANKPAGE Changes
+If user starts the purchase process and drop in-between.*/
+- (void)productPurchaseCancelled:(UAProduct *)product;
 @end

@@ -144,6 +144,11 @@ UIKIT_EXTERN NSString* const UIApplicationDidEnterBackgroundNotification __attri
         id<UAStoreFrontAlertProtocol> alertHandler = [[[UAStoreFront shared] uiClass] getAlertHandler];
         [alertHandler showPaymentTransactionFailedAlert];
     }
+	else {/*BLANKPAGE Changes. Lets delegate know if user drops in between the purchase process*/
+		if([[UAStoreFront shared].delegate respondsToSelector:@selector(productPurchaseCancelled:)]) {
+			[[UAStoreFront shared].delegate productPurchaseCancelled:[self productFromTransaction:transaction]];
+		}
+	}
 
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
 
